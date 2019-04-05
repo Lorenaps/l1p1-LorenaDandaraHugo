@@ -42,7 +42,7 @@ climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva)
 
 g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
-ggplot(data = g_mes) + geom_bar(mapping = aes(x = mes, y = mean_tmax))
+ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
 
