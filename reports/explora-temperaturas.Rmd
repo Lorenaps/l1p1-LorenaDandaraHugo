@@ -18,25 +18,10 @@ theme_set(theme_bw())
 ```{r}
 climas = read_csv(here::here("data/clima_cg_jp-semanal.csv"), 
                   col_types = "cTdddddd")
-
-climas
-
-glimpse(climas)
 ```
-
 ## Perguntas sobre Temperatura
 
-### Onde é mais quente?
-
-### As temperaturas máximas semanais (o pico do calor) são tão diferentes quanto as médias? Mais?  
-
-### Quais os meses mais quentes e mais frios? 
-
-### Qual foi o São João  mais frio de CG que está nos nossos dados?
-
-## Perguntas Respondidas
-
-### Onde é mais quente?
+#### Onde é mais quente?
 
 ```{r}
 
@@ -53,12 +38,25 @@ media_por_cidade = media_por_ano %>%
                                                                      
 g_mes = climas_qt %>% group_by(ano, mes, cidade) %>% summarise(mean_tmax = mean(x=tmax))
 
-ggplot(data = media_por_ano, mapping = aes(x = ano, y = mean_tmax)) + 
-                geom_point() + 
-                geom_smooth()
-
+ggplot(data = media_por_ano, mapping = aes(x = ano, y = mean_tmax, label=mean_tmax)) + 
+                geom_line(aes(col=cidade), size=2) + 
+                ggtitle("Média da temperatura máxima ao longo dos anos", subtitle="Entre Campina Grande e João Pessoa") + 
+                xlab("Anos") + 
+                ylab("Média Temperatura Máxima") +
+                scale_x_continuous(breaks = seq(1992,2020,2))
 ```
-### Quais os meses mais quentes e mais frios? 
+```{r}
+ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_tmax, label=mean_tmax)) + 
+                geom_col(aes(fill=cidade), size=2) + 
+                ggtitle("Média da temperatura anual entre 1991 e 2019", subtitle="Entre Campina Grande e João Pessoa") + 
+                xlab("Cidades") + 
+                ylab("Média da Temperatura Máxima") + 
+                geom_label()
+```
+
+Calculando a média anual da temperatura máxima para cada cidade é possível visualizar o comportamento da temperatura ao longos dos anos. Observando essa primeira visualização é possível identificar como a temperatura de João Pessoa vem passando a temperatura de Campina Grande durante esse tempo. Uma vez que se considere a média de todos os anos chegamos aos valores da última visualização, sobre a qual podemos afirmar que João Pessoa apresenta a maior média e por isso pode ser considerada mais quente do que Campina Grande.
+
+#### Quais os meses mais quentes e mais frios? 
 
 ```{r}
 
@@ -66,22 +64,13 @@ climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva)
 
 g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
-ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
+# ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
 ## Perguntas sobre Chuva
 
-### Quanto chove por semana em JP e CG?
+#### No geral, onde chove mais?
 
-### Como é a distribuição do volume de chuvas por semana em JP e CG? A chuva varia mais ou menos que a temperatura? O formato da distribuição é igual? 
-
-### No geral, onde chove mais?
-
-### A distribuição é diferente em meses específicos? 
-
-## Perguntas Respondidas
-
-### No geral, onde chove mais?
 ```{r}
 
 climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
@@ -91,16 +80,18 @@ g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
 g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
-ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
+# ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
-### A distribuição é diferente em meses específicos? 
+
+#### A distribuição é diferente em meses específicos? 
+
 ```{r}
 
 climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva) 
 
 g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
-ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
+# ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
