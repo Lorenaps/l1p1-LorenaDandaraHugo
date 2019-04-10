@@ -21,20 +21,34 @@ climas = read_csv(here::here("data/clima_cg_jp-semanal.csv"),
 ```
 ## Perguntas sobre Temperatura
 
+```{r}
+climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
+
+media_por_mes_ano = climas_qt %>% 
+                group_by(ano, mes, cidade) %>% 
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva)) 
+
+teste_completude = media_por_mes_ano %>% 
+                group_by(ano, cidade) %>% 
+                count() %>% 
+                filter(n == 12)  %>% 
+                group_by(ano) %>% 
+                count() %>% 
+                filter(n == 2)  
+```
+**Olhando os dados mais de perto**
+Analisando o dataset os anos que possuem 12 medicoes completas para ambas as cidades são de 1995 a 1999 e 2002 a 2018.
+A fim de analisar o comportamento das métricas sem ter quebras ao longo do tempo 
+será considerado para análise apenas o intervalo de 2002 a 2018.
+
 #### Onde é mais quente?
 
 ```{r}
 
-climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
-
 media_por_ano = climas_qt %>% 
+                filter(ano > 2001 & ano < 2019)  %>% 
                 group_by(ano, cidade) %>% 
-                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva)) %>% 
-                filter(ano > 1991) 
-
-media_por_cidade = media_por_ano %>% 
-                    group_by(cidade) %>% 
-                    summarise(mean_tmax = mean(x=mean_tmax), mean_tmedia = mean(x=mean_tmedia), mean_chuva = mean(x=mean_chuva))
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva))
                                                                      
 g_mes = climas_qt %>% group_by(ano, mes, cidade) %>% summarise(mean_tmax = mean(x=tmax))
 
@@ -43,12 +57,16 @@ ggplot(data = media_por_ano, mapping = aes(x = ano, y = mean_tmax, label=mean_tm
                 ggtitle("Média da temperatura máxima ao longo dos anos", subtitle="Entre Campina Grande e João Pessoa") + 
                 xlab("Anos") + 
                 ylab("Média Temperatura Máxima") +
-                scale_x_continuous(breaks = seq(1992,2020,2))
+                scale_x_continuous(breaks = seq(2002,2018,2))
 ```
 ```{r}
-ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_tmax, label=mean_tmax)) + 
+media_por_cidade = media_por_ano %>% 
+                    group_by(cidade) %>% 
+                    summarise(mean_tmax = mean(x=mean_tmax), mean_tmedia = mean(x=mean_tmedia), mean_chuva = mean(x=mean_chuva))
+
+ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_chuva, label=mean_chuva)) + 
                 geom_col(aes(fill=cidade), size=2) + 
-                ggtitle("Média da temperatura anual entre 1991 e 2019", subtitle="Entre Campina Grande e João Pessoa") + 
+                ggtitle("Média da temperatura anual entre 2002 e 2018", subtitle="Entre Campina Grande e João Pessoa") + 
                 xlab("Cidades") + 
                 ylab("Média da Temperatura Máxima") + 
                 geom_label()
@@ -60,9 +78,11 @@ Calculando a média anual da temperatura máxima para cada cidade é possível v
 
 ```{r}
 
-climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva) 
-
-g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
+media_por_mes_ano = climas_qt %>% 
+                filter(ano > 2001 & ano < 2019)  %>% 
+                group_by(ano, mes, cidade) %>% 
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva))
+                                                                     
 
 # ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
@@ -73,25 +93,18 @@ g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 
 ```{r}
 
-climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
-
-g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
-
-
-g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
-
-# ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
-
+ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_chuva, label=mean_chuva)) + 
+                geom_col(aes(fill=cidade), size=2) + 
+                ggtitle("Média quantidade de chuva entre 2002 e 2018", subtitle="Entre Campina Grande e João Pessoa") + 
+                xlab("Cidades") + 
+                ylab("Média da quantidade de chuva") + 
+                geom_label()
 ```
+Considerando a média mensal e anual do índice pluviométrico de todos os anos da quantidade de chuva chegamos aos valores acima, sobre a qual podemos afirmar que chove mais em João Pessoa do que Campina Grande.
 
 #### A distribuição é diferente em meses específicos? 
 
 ```{r}
 
-climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva) 
-
-g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
-
-# ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
