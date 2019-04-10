@@ -11,10 +11,11 @@ library(tidyverse)
 library(here)
 library(lubridate)
 library(ggbeeswarm)
+library(ggplot2)
 theme_set(theme_bw())
 ```
 
-```{r read}
+```{r}
 climas = read_csv(here::here("data/clima_cg_jp-semanal.csv"), 
                   col_types = "cTdddddd")
 
@@ -23,20 +24,43 @@ climas
 glimpse(climas)
 ```
 
-## Temperatura
+## Perguntas sobre Temperatura
 
 ### Onde é mais quente?
 
 ### As temperaturas máximas semanais (o pico do calor) são tão diferentes quanto as médias? Mais?  
 
 ### Quais os meses mais quentes e mais frios? 
-Legível para  audiencia?
-Não sabemos a resposta?
-É plausível?
-É possível?
-É específica?
 
-```{r read}
+### Qual foi o São João  mais frio de CG que está nos nossos dados?
+
+## Perguntas Respondidas
+
+### Onde é mais quente?
+
+```{r}
+
+climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
+
+media_por_ano = climas_qt %>% 
+                group_by(ano, cidade) %>% 
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva)) %>% 
+                filter(ano > 1991) 
+
+media_por_cidade = media_por_ano %>% 
+                    group_by(cidade) %>% 
+                    summarise(mean_tmax = mean(x=mean_tmax), mean_tmedia = mean(x=mean_tmedia), mean_chuva = mean(x=mean_chuva))
+                                                                     
+g_mes = climas_qt %>% group_by(ano, mes, cidade) %>% summarise(mean_tmax = mean(x=tmax))
+
+ggplot(data = media_por_ano, mapping = aes(x = ano, y = mean_tmax)) + 
+                geom_point() + 
+                geom_smooth()
+
+```
+### Quais os meses mais quentes e mais frios? 
+
+```{r}
 
 climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva) 
 
@@ -45,10 +69,7 @@ g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
 ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ```
-
-### Qual foi o São João  mais frio de CG que está nos nossos dados?
-
-## Chuva
+## Perguntas sobre Chuva
 
 ### Quanto chove por semana em JP e CG?
 
@@ -58,3 +79,28 @@ ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
 
 ### A distribuição é diferente em meses específicos? 
 
+## Perguntas Respondidas
+
+### No geral, onde chove mais?
+```{r}
+
+climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva, cidade, ano) 
+
+g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
+
+
+g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
+
+ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
+
+```
+### A distribuição é diferente em meses específicos? 
+```{r}
+
+climas_qt = climas %>% dplyr::select(mes, tmedia, tmax, tmin, chuva) 
+
+g_mes = climas_qt %>% group_by(mes) %>% summarise(mean_tmax = mean(x=tmax))
+
+ggplot(data = g_mes, mapping = aes(x = mes, y = mean_tmax)) + geom_point()
+
+```
