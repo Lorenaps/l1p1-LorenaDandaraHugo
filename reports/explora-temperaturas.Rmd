@@ -89,11 +89,8 @@ ggplot(data = media_por_mes_ano, mapping = aes(x = mes, y = mean_tmax)) +
                 ggtitle("Média da temperatura mensal entre os anos de 2002 e 2018", subtitle="Entre Campina Grande e João Pessoa") + 
                 xlab("Meses") + 
                 ylab("Média da Temperatura Máxima") + 
-                facet_grid(rows = vars(ano)) +
-                scale_x_continuous(breaks = seq(1,12,1)) + 
-    scales = "free"
-
-
+                facet_wrap(~ ano, ncol=6) +
+                scale_x_continuous(breaks = seq(1,12,1))
 ```
 ## Perguntas sobre Chuva
 
