@@ -34,7 +34,7 @@ teste_completude = media_por_mes_ano %>%
                 filter(n == 12)  %>% 
                 group_by(ano) %>% 
                 count() %>% 
-                filter(n == 2)  
+                filter(nn == 2)  
 ```
 **Olhando os dados mais de perto**
 Analisando o dataset os anos que possuem 12 medicoes completas para ambas as cidades são de 1995 a 1999 e 2002 a 2018.
@@ -64,7 +64,7 @@ media_por_cidade = media_por_ano %>%
                     group_by(cidade) %>% 
                     summarise(mean_tmax = mean(x=mean_tmax), mean_tmedia = mean(x=mean_tmedia), mean_chuva = mean(x=mean_chuva))
 
-ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_chuva, label=mean_chuva)) + 
+ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_tmax, label=mean_tmax)) + 
                 geom_col(aes(fill=cidade), size=2) + 
                 ggtitle("Média da temperatura anual entre 2002 e 2018", subtitle="Entre Campina Grande e João Pessoa") + 
                 xlab("Cidades") + 
@@ -83,15 +83,45 @@ media_por_mes_ano = climas_qt %>%
                 group_by(ano, mes, cidade) %>% 
                 summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva))
                                                                      
-
+media_por_mes_ano = media_por_mes_ano %>% 
+                filter(ano > 2014)
+    
 ggplot(data = media_por_mes_ano, mapping = aes(x = mes, y = mean_tmax)) +
                 geom_line(aes(col=cidade), size=2) + 
-                ggtitle("Média da temperatura mensal entre os anos de 2002 e 2018", subtitle="Entre Campina Grande e João Pessoa") + 
+                ggtitle("Média da temperatura mensal entre os anos de 2015 e 2018", 
+                        subtitle="Entre Campina Grande e João Pessoa") + 
                 xlab("Meses") + 
                 ylab("Média da Temperatura Máxima") + 
-                facet_wrap(~ ano, ncol=6) +
-                scale_x_continuous(breaks = seq(1,12,1))
+                facet_wrap(~ ano) +
+                scale_x_continuous(breaks = seq(1,12,1)) 
+
 ```
+Para observar o comportamento da temperatura ao longo dos anos entre 2015 e 2018 podemos observar o gráfico acima e ver que existem alguns padrões. Para Campina, por exemplo, geralmente o final do ano é o período de maior calor.
+
+```{r}
+
+media_por_mes_todos_os_anos = climas_qt %>% 
+                filter(ano > 2001 & ano < 2019)  %>% 
+                group_by(mes, cidade) %>% 
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva))
+    
+ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes, y = mean_tmax)) +
+                geom_line(aes(col=cidade), size=2) + 
+                ggtitle("Temperatura mensal média entre os anos de 2002 e 2018", 
+                        subtitle="Entre Campina Grande e João Pessoa") + 
+                xlab("Meses") + 
+                ylab("Média da Temperatura Máxima") + 
+                scale_x_continuous(breaks = seq(1,12,1)) 
+
+```
+
+Para chegar a uma resposta mais fechada observa-se a média de todos os anos entre 2002 e 2018 para cada mês, e nesse caso é possível identificar que os meses mais quentes são:
+- **Março** para João Pessoa
+- **Dezembro** para Campina Grande
+
+E os meses mais frios
+- **Julho** para ambas as cidades
+
 ## Perguntas sobre Chuva
 
 #### No geral, onde chove mais?
