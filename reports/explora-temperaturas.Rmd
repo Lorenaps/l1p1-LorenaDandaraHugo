@@ -37,6 +37,7 @@ teste_completude = media_por_mes_ano %>%
                 filter(nn == 2)  
 ```
 **Olhando os dados mais de perto**
+
 Analisando o dataset os anos que possuem 12 medicoes completas para ambas as cidades são de 1995 a 1999 e 2002 a 2018.
 A fim de analisar o comportamento das métricas sem ter quebras ao longo do tempo 
 será considerado para análise apenas o intervalo de 2002 a 2018.
@@ -72,6 +73,7 @@ ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_tmax, label=m
                 geom_label()
 ```
 
+
 Calculando a média anual da temperatura máxima para cada cidade é possível visualizar o comportamento da temperatura ao longos dos anos. Observando essa primeira visualização é possível identificar como a temperatura de João Pessoa vem passando a temperatura de Campina Grande durante esse tempo. Uma vez que se considere a média de todos os anos chegamos aos valores da última visualização, sobre a qual podemos afirmar que João Pessoa apresenta a maior média e por isso pode ser considerada mais quente do que Campina Grande.
 
 #### Quais os meses mais quentes e mais frios? 
@@ -96,6 +98,8 @@ ggplot(data = media_por_mes_ano, mapping = aes(x = mes, y = mean_tmax)) +
                 scale_x_continuous(breaks = seq(1,12,1)) 
 
 ```
+
+
 Para observar o comportamento da temperatura ao longo dos anos entre 2015 e 2018 podemos observar o gráfico acima e ver que existem alguns padrões. Para Campina, por exemplo, geralmente o final do ano é o período de maior calor.
 
 ```{r}
@@ -115,7 +119,10 @@ ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes, y = mean_tmax)
 
 ```
 
+
+
 Para chegar a uma resposta mais fechada observa-se a média de todos os anos entre 2002 e 2018 para cada mês, e nesse caso é possível identificar que os meses mais quentes são:
+
 - **Março** para João Pessoa
 - **Dezembro** para Campina Grande
 
@@ -135,11 +142,25 @@ ggplot(data = media_por_cidade, mapping = aes(x = cidade, y = mean_chuva, label=
                 ylab("Média da quantidade de chuva") + 
                 geom_label()
 ```
+
+
 Considerando a média mensal e anual do índice pluviométrico de todos os anos da quantidade de chuva chegamos aos valores acima, sobre a qual podemos afirmar que chove mais em João Pessoa do que Campina Grande.
 
 #### A distribuição é diferente em meses específicos? 
 
 ```{r}
 
+    
+ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes, y = mean_chuva)) +
+                geom_line(aes(col=cidade), size=2) + 
+                ggtitle("Índice pluviométrico mensal médio entre os anos de 2002 e 2018", 
+                        subtitle="Entre Campina Grande e João Pessoa") + 
+                xlab("Meses") + 
+                ylab("Índice pluviométrico médio") + 
+                scale_x_continuous(breaks = seq(1,12,1)) 
 
 ```
+
+Com a visualização acima pode-se observar que o mes com maior quantidade de chuva é **Junho** para ambas as cidades. 
+E o mês com menos chuva é **Novembro**, também para ambas as cidades.
+
