@@ -34,7 +34,7 @@ teste_completude = media_por_mes_ano %>%
                 filter(n == 12)  %>% 
                 group_by(ano) %>% 
                 count() %>% 
-                filter(nn == 2)  
+                filter(n == 2)  
 ```
 **Olhando os dados mais de perto**
 
@@ -163,4 +163,18 @@ ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes, y = mean_chuva
 
 Com a visualização acima pode-se observar que o mes com maior quantidade de chuva é **Junho** para ambas as cidades. 
 E o mês com menos chuva é **Novembro**, também para ambas as cidades.
+
+
+## Melhorias
+
+- Pergunta para o domínio?
+
+- Por que / para quê ?
+
+- Como os dados podem ser usados para responder a peguntas
+
+- Ajude com sua leitura - O leitor pode se interpretar pos graficos de outra forma
+
+- Conclusao - que gere um novo conhecimento sobre o domínio
+
 
