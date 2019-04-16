@@ -1,7 +1,24 @@
 ---
 title: "R Notebook"
-output: html_notebook
+author:
+- Dandara Sousa
+- Hugo Silva
+- Lorena Pereira
+output:
+  html_document:
+    df_print: paged
 ---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(lubridate)
+library(ggbeeswarm)
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+
 
 ```{r}
 climas = read_csv(here::here("data/clima_cg_jp-semanal.csv"), 
@@ -14,7 +31,7 @@ climas <- climas %>%
 
 ### Qual foi o São João  mais frio de CG que está nos nossos dados? 
 
-Filtrando os dados para apenas a cidade de Campina Grande e no período entre 18 e 24 de junho (a semana do São João), o São João mais frio é aquele onde a temperatura mínima semanal foi a menor de todas. Para este caso, observando anualmente é visto que dois anos possuem esse marco de São João mais frio. São eles 1997 e 2018 com temperaturas mínimas de 16.6°.
+Filtrando os dados para apenas a cidade de Campina Grande no período entre 18 e 24 de junho (a semana do São João) e a partir de 2002 para evitar a falta de dados dos anos anteriores, o São João mais frio é aquele onde a temperatura mínima semanal foi a menor de todas. Para este caso, observando anualmente é visto 2018 teve esse marco com temperatura mínima de 16.6°.
   
 ```{r}
 climas %>%
@@ -49,5 +66,74 @@ ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes_abrev, y = mean
                 labs(x="Meses", y="Índice pluviométrico médio", colour = "Cidade") 
 ```
 
-Com a visualização acima pode-se observar que o mes com maior quantidade de chuva é **Junho** para ambas as cidades. 
+Com a visualização acima pode-se observar que o mês com maior quantidade de chuva é **Junho** para ambas as cidades. 
+E o mês com menos chuva é **Novembro**, também para ambas as cidades.---
+title: "R Notebook"
+author:
+- Dandara Sousa
+- Hugo Silva
+- Lorena Pereira
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(lubridate)
+library(ggbeeswarm)
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+
+
+```{r}
+climas = read_csv(here::here("data/clima_cg_jp-semanal.csv"), 
+                  col_types = "cTdddddd")
+
+climas <- climas %>%
+    mutate(mes_abrev = factor(month.abb[mes], month.abb))
+
+```
+
+### Qual foi o São João  mais frio de CG que está nos nossos dados? 
+
+Filtrando os dados para apenas a cidade de Campina Grande no período entre 18 e 24 de junho (a semana do São João) e a partir de 2002 para evitar a falta de dados dos anos anteriores, o São João mais frio é aquele onde a temperatura mínima semanal foi a menor de todas. Para este caso, observando anualmente é visto 2018 teve esse marco com temperatura mínima de 16.6°.
+  
+```{r}
+climas %>%
+  filter(ano >= 2002 & ano <= 2018)  %>%
+  filter(cidade == "Campina Grande" & mes == 6 & day(as.Date(semana)) >= 18 & day(as.Date(semana)) <=24) %>%
+  ggplot(aes(ano,tmin, label=tmin)) + 
+  geom_line(aes(color=cidade)) +
+  geom_point() +
+  geom_label(label.size=0.1, 
+             hjust=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), 
+             vjust=c(-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 1.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5)) +
+  scale_x_continuous(breaks = seq(1995,2018,2)) +
+  scale_y_continuous(breaks = seq(16,25,0.5)) +
+  labs(x = "Ano", y = "Temperatura Mínima") +
+  theme(legend.position = "none") 
+```
+
+#### A distribuição é diferente em meses específicos? 
+
+```{r}
+climas_qt = climas %>% dplyr::select(mes, mes_abrev, tmedia, tmax, tmin, chuva, cidade, ano) 
+
+media_por_mes_todos_os_anos = climas_qt %>% 
+                filter(ano > 2001 & ano < 2019)  %>% 
+                group_by(mes_abrev, cidade) %>% 
+                summarise(mean_tmax = mean(x=tmax), mean_tmedia = mean(x=tmedia), mean_chuva = mean(x=chuva))
+
+ggplot(data = media_por_mes_todos_os_anos, mapping = aes(x = mes_abrev, y = mean_chuva)) +
+                geom_line(aes(col=cidade, group=cidade), size=1.2) + 
+                ggtitle("Índice pluviométrico mensal médio entre os anos de 2002 e 2018", 
+                        subtitle="Entre Campina Grande e João Pessoa") + 
+                labs(x="Meses", y="Índice pluviométrico médio", colour = "Cidade") 
+```
+
+Com a visualização acima pode-se observar que o mês com maior quantidade de chuva é **Junho** para ambas as cidades. 
 E o mês com menos chuva é **Novembro**, também para ambas as cidades.
